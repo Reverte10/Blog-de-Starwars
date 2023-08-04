@@ -11,6 +11,25 @@ const getState = ({ getStore, getActions, setStore }) => {
 			favorite: []			
 		},
 		actions: {
+
+			login: async (dataEmail,dataPassword) => {
+				//sincronismo y asincronismo
+				try {
+					//codigo exitoso
+					let data = await axios.post('https://shiny-rotary-phone-rjrg54j449v2w544-3001.app.github.dev/api/login',{
+						email:dataEmail,
+						password:dataPassword
+					})
+					console.log(data);
+					localStorage.setItem("token",data.data.access_token)
+					setStore({token:data.data.access_token})
+					return true;
+				} catch (error) {
+					//manejar los errrores
+					console.log(error);
+					return false;
+				}},
+
 			// 1. Obteniendo los personajes de la API
 			getCharacters: () => {
 				fetch("https://www.swapi.tech/api/people/", {
