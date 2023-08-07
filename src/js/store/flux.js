@@ -1,123 +1,247 @@
+import axios from "axios"
+
 const getState = ({ getStore, getActions, setStore }) => {
+
 	return {
 		store: {
-			character: [],
 			characters: [],
-			planet: [],
-			planets: [],
-			vehicle: [],
-			vehicles: [],
-			favorites: [],
-			favorite: []			
+			infoCharacters:[],
+			planets:[],
+			infoPlanets:[],
+			vehicles:[],
+			infoVehicles:[],
+			favoritos:[],
+			token:"",
+			log: false,
+		
+
+
+			demo: [
+				{
+					title: "FIRST",
+					background: "white",
+					initial: "white"
+				},
+				{
+					title: "SECOND",
+					background: "white",
+					initial: "white"
+				}
+			]
 		},
 		actions: {
 
+			// changeLog: () => {setStore({log:true})
+		
+			// 				setStore({favoritos:[]})},
+
+			logout: () => {
+				localStorage.removeItem("token")
+				setStore({log:false})
+
+				return false
+			},
+
 			login: async (dataEmail,dataPassword) => {
-				//sincronismo y asincronismo
+
 				try {
-					//codigo exitoso
-					let data = await axios.post('https://shiny-rotary-phone-rjrg54j449v2w544-3001.app.github.dev/api/login',{
+
+					let data = await axios.post('https://shiny-rotary-phone-rjrg54j449v2w544-3001.app.github.dev//api/login',{
+
 						email:dataEmail,
+
 						password:dataPassword
+
 					})
+
 					console.log(data);
+
 					localStorage.setItem("token",data.data.access_token)
+
 					setStore({token:data.data.access_token})
+					setStore({log:false})
+
 					return true;
+
 				} catch (error) {
-					//manejar los errrores
+
 					console.log(error);
+
 					return false;
-				}},
 
-			// 1. Obteniendo los personajes de la API
-			getCharacters: () => {
-				fetch("https://www.swapi.tech/api/people/", {
-					method: "GET",
-				})
-					.then((response) => response.json())
-					.then(data => {
-						setStore({ ...getStore , characters: data.results});
-					})// => guardo el json en un espacio de memoria
-					.catch((error) => console.log(error))// => te aviso si algo sale mal
-			},
-
-			// 1.1 Obteniendo un personaje de la API
-			getCharacter: (id) => {
-				fetch("https://www.swapi.tech/api/people/" + id, {
-					method: "GET",
-				})
-					.then((response) => response.json())
-					.then(data => {
-						setStore({ ...getStore , character: data.result});
-					})// => guardo el json en un espacio de memoria
-					.catch((error) => console.log(error))// => te aviso si algo sale mal
-			},
-
-
-			// 2. Obteniendo los planetas de la API
-			getPlanets: () => {
-				fetch("https://www.swapi.tech/api/planets/", {
-					method: "GET",
-				})
-					.then((response) => response.json())
-					.then(data => {
-						setStore({ ...getStore , planets: data.results });
-					})// => guardo el json en un espacio de memoria
-					.catch((error) => console.log(error))// => te aviso si algo sale mal
-			},
-			// 2.1 Obteniendo un planeta de la API
-			getPlanet: (id) => {
-				fetch("https://www.swapi.tech/api/planets/" + id, {
-					method: "GET",
-				})
-					.then((response) => response.json())
-					.then(data => {
-						setStore({ ...getStore , planet: data.result});
-					})// => guardo el json en un espacio de memoria
-					.catch((error) => console.log(error))// => te aviso si algo sale mal
-			},
-
-			// 3. Obteniendo los coches de la API
-			getVehicles: () => {
-				fetch("https://www.swapi.tech/api/vehicles/", {
-					method: "GET",
-				})
-					.then((response) => response.json())
-					.then(data => {
-						setStore({ ...getStore , vehicles: data.results });
-					})// => guardo el json en un espacio de memoria
-					.catch((error) => console.log(error))// => te aviso si algo sale mal
-			},
-
-			// 3. Obteniendo un choche de la API
-			getVehicle: (id) => {
-				fetch("https://www.swapi.tech/api/vehicles/" + id , {
-					method: "GET",
-				})
-					.then((response) => response.json())
-					.then(data => {
-						setStore({ ...getStore , vehicle: data.result });
-						console.log(data);
-					})// => guardo el json en un espacio de memoria
-					.catch((error) => console.log(error))// => te aviso si algo sale mal
-			},
-			
-			//3. Añadir a favortios
-			addFavorites: (favorite) => {
-				const favoritesState = getStore().favorites;
-				if (!favoritesState.includes(favorite)) {
-					const updatedFavorites = favoritesState.concat(favorite);
-					setStore({ ...getStore, favorites: updatedFavorites });
 				}
 			},
+
+			getProfile: async () => {
+
+				let token =localStorage.getItem("token")
+
+				try {
+
+					let data = await axios.get('https://shiny-rotary-phone-rjrg54j449v2w544-3001.app.github.dev//api/profile',{
+
+						headers:{
+							"Authorization": `Bearer ${token}`,						
+						}
+
+					})
+
+					console.log(data);
+
+					// localStorage.setItem("token",data.data.access_token)
+
+					// setStore({token:data.data.access_token})
+					setStore({log:true})
+
+					return true;
+
+				} catch (error) {
+
+					console.log(error);
+					setStore({log:false})
+
+
+					return false;
+
+				}
+			},
+
+			validToken: async () => {
+
+				let token = localStorage.getItem("token")
+
+				try {
+
+					//codigo exitoso
+
+					let data = await axios.get('https://shiny-rotary-phone-rjrg54j449v2w544-3001.app.github.dev//api/validate',{
+
+						headers:{
+
+							"Authorization": `Bearer ${token}`,
+
+						}
+
+					})
+
+					console.log(data);
+
+					return true;
+
+				} catch (error) {
+
+					//manejar los errrores
+
+					console.log(error);
+
+					return false;
+
+				}
+
+			},
+
+			addFavorito: (favs) => {
+				setStore({ favoritos: favs })
+			},
+
+			removeFav: (e,el) => {
+				e.stopPropagation()
+				const updatedItems =(getStore().favoritos.indexOf(el) !=-1)?
+				getStore().favoritos.filter((item) => item != el)
+				:null
+
+				setStore({favoritos:updatedItems})
+
+			  },
 			
-			//4. Eliminar favorito
-			deleteFavorite: (name) => {
-				const store = getStore()
-				const newFavorite = store.favorites.filter((item) => item !== name);
-				setStore({favorites: newFavorite});
+			  //CHARACTERS
+
+			getCharacters: () => {
+				fetch("https://www.swapi.tech/api/people/", {
+					method: "GET"
+				})
+				.then(res => res.json())
+				.then(data => setStore({ characters: data.results}))
 		
+				.catch(err => console.error(err))
+				},
+
+			getInfoCharacters: (uid) => {
+				fetch("https://www.swapi.tech/api/people/"+uid, {
+					method: "GET"
+				})
+				.then(res => res.json())
+				.then(data => setStore({ infoCharacters: data.result.properties}))
+		
+				.catch(err => console.error(err))
+				},
+
+				//PLANETS
+
+			getPlanets: () => {
+			fetch("https://www.swapi.tech/api/planets/", {
+				method: "GET"
+			})
+			.then(res => res.json())
+			.then(data => setStore({ planets: data.results}))
+	
+			.catch(err => console.error(err))
+			},
+
+		getInfoPlanets: (uid) => {
+			fetch("https://www.swapi.tech/api/planets/"+uid, {
+				method: "GET"
+			})
+			.then(res => res.json())
+			.then(data => setStore({ infoPlanets: data.result.properties}))
+	
+			.catch(err => console.error(err))
+			},
+
+			//VEHICLES
+
+		getVehicles: () => {
+			fetch("https://www.swapi.tech/api/vehicles/", {
+				method: "GET"
+			})
+			.then(res => res.json())
+			.then(data => setStore({ vehicles: data.results}))
+			.catch(err => console.error(err))
+			},
+
+		getInfoVehicles: (uid) => {
+			fetch("https://www.swapi.tech/api/vehicles/"+uid, {
+				method: "GET"
+			})
+			.then(res => res.json())
+			.then(data => setStore({ infoVehicles: data.result.properties}))
+	
+			.catch(err => console.error(err))
+			},
+
+
+			// Use getActions to call a function within a fuction
+			exampleFunction: () => {
+				getActions().changeColor(0, "green");
+			},
+			loadSomeData: () => {
+				/**
+					fetch().then().then(data => setStore({ "foo": data.bar }))
+				*/
+			},
+			changeColor: (index, color) => {
+				//get the store
+				const store = getStore();
+
+				//we have to loop the entire demo array to look for the respective index
+				//and change its color
+				const demo = store.demo.map((elm, i) => {
+					if (i === index) elm.background = color;
+					return elm;
+				});
+
+				//reset the global store
+				setStore({ demo: demo });
 			}
 		}
 	};

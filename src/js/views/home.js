@@ -8,12 +8,19 @@ import { Context } from "../store/appContext"
 export const Home = () => {
 
 	const { store, actions } = useContext(Context);
+	async function redireccion(){
+		let logged = await actions.getProfile();
+		if(!logged) {
+			navigate("/login")
+		}
+	} 
+
 
 	useEffect(() => {
 		actions.getCharacters(),
 		actions.getPlanets(),
-		actions.getVehicles()
-
+		actions.getVehicles(),
+		redireccion()
 	}, []);
 
 	return (

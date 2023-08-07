@@ -1,3 +1,18 @@
 /* 
     General Styles
 */
+#foto {
+
+    height: 300px;
+}
+
+#logo {
+
+    width: 78px;
+    margin-left: 46px;   
+}
+
+.dropdown-menu {
+  
+    min-width: 9rem;
+}
